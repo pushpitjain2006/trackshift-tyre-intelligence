@@ -20,7 +20,7 @@ def render_kpi_row(
     deg_rate: float,
     total_deg: float,
     stint_laps: int,
-    confidence: float,
+    confidence: float | str,
     compound: str = "MEDIUM",
 ) -> None:
     """Render the top KPI summary row."""
@@ -50,11 +50,19 @@ def render_kpi_row(
         </div>
         """, unsafe_allow_html=True)
     with cols[3]:
-        color = COLORS["success"] if confidence > 70 else COLORS["warning"]
+        if isinstance(confidence, (int, float)):
+            color = COLORS["success"] if confidence > 70 else COLORS["warning"]
+            val_str = f"{confidence:.0f}%"
+            size = "2.0em"
+        else:
+            color = COLORS["text_secondary"]
+            val_str = str(confidence)
+            size = "1.5em"
+            
         st.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-label">Model Confidence</div>
-            <div class="kpi-value" style="color: {color}">{confidence:.0f}%</div>
+            <div class="kpi-value" style="color: {color}; font-size: {size};">{val_str}</div>
             <div class="kpi-unit">posterior quality</div>
         </div>
         """, unsafe_allow_html=True)

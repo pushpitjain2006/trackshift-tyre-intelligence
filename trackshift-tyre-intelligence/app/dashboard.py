@@ -351,11 +351,14 @@ def main():
             )
 
         # KPI Row
-        confidence = 85.0
-        if bayesian_result.diagnostics:
-            rhat = bayesian_result.diagnostics.get("max_rhat", 1.0)
-            if isinstance(rhat, (int, float)):
-                confidence = max(0, min(100, 100 - (rhat - 1.0) * 2000))
+        if "Kalman" in model_used or "Regression" in model_used:
+            confidence = "N/A (MLE)"
+        else:
+            confidence = 85.0
+            if bayesian_result.diagnostics:
+                rhat = bayesian_result.diagnostics.get("max_rhat", 1.0)
+                if isinstance(rhat, (int, float)):
+                    confidence = max(0, min(100, 100 - (rhat - 1.0) * 2000))
 
         render_kpi_row(
             deg_rate=bayesian_result.rate_per_lap,
